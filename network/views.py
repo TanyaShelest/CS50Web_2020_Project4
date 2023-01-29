@@ -8,7 +8,8 @@ from .models import User, Profile
 
 
 def index(request):
-    return render(request, "network/index.html")
+    posts = Post.objects.all()
+    return render(request, "network/posts.html", {posts: posts})
 
 
 def login_view(request):

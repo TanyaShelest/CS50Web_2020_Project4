@@ -1,5 +1,9 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    TODO
+<ul id="navigation">
+    {% for post in posts %}
+        <li><div><h4>{{ post.title }}</h4><p>{{ post.author }}</p>{{ post.body }}</div></li>
+    {% endfor %}
+    </ul>
 {% endblock %}
