@@ -2,6 +2,7 @@
 
 {% block body %}
 <ul id="navigation">
+    Posts
     {% for post in posts %}
         <li><div><h4>{{ post.title }}</h4><p>{{ post.author }}</p>{{ post.body }}</div></li>
     {% endfor %}
