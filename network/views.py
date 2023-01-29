@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import User, Profile
 
 
 def index(request):
@@ -61,3 +61,17 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+def profile(request, id):
+
+    user = request.user
+    user_profile = Profile.objects.get(user=user)
+    user_follows = user_profile.follows.all()
+    user_followers = user_profile.followed_by.all()
+
+    followers_count = user_followers.count()
+    return render(request, "network/profile.html", {
+        user: user,
+        user_followers: user_followers,
+        user_follows: user_follows, 
+    })
