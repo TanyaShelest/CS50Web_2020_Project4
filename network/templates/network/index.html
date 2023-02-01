@@ -1,10 +1,28 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-<ul id="navigation">
-    Posts
-    {% for post in posts %}
-        <li><div><h4>{{ post.title }}</h4><p>{{ post.author }}</p>{{ post.body }}</div></li>
-    {% endfor %}
-    </ul>
+
+    {% if messages %}
+        {% for message in messages %}
+        <div{% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert"{% endif %}>{{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+    <h3>Add New Post</h3>
+    <form action="{% url 'index' %}" method="post">
+        {% csrf_token %}        
+        {{ form }}
+        <input class="btn btn-primary" type="submit" value="Post">
+    </form>
+
+    <ul id="posts">
+        <h3>All Posts</h3>
+        {% for post in posts %}
+            <li><div><h4>{{ post.title }}</h4><p>{{ post.author.full_name }}</p><small>{{ post.created_at }}</small><br>{{ post.body }}</div></li>
+        {% endfor %}
+        </ul>
 {% endblock %}

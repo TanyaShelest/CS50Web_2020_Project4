@@ -1,15 +1,36 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
 from .models import User, Profile, Post
+from .forms import PostForm
 
 
 def index(request):
+     # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = PostForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+
+            messages.info(request, f'Your message here')
+            return HttpResponseRedirect(reverse("index"))
+            
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = PostForm()
+
     return render(request, "network/index.html", {
-        "posts": Post.objects.all()
+        "posts": Post.objects.order_by('-created_at'),
+        "form": form
     })
 
 

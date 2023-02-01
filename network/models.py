@@ -10,6 +10,9 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.id}: {self.first_name} {self.last_name}"
 
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
 class Profile(models.Model):
     user = models.OneToOneField("User", on_delete=models.CASCADE)
     follows = models.ManyToManyField("self", related_name="followed_by", symmetrical=False, blank=True)
