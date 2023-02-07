@@ -12,8 +12,8 @@ class ProfileAdmin(admin.ModelAdmin):
 
 
 class PostAdmin(admin.ModelAdmin):
-    list_display = ("title", "author")
-    fields = ("author", "title", "body")
+    list_display = ("author", "body")
+    fields = ("author", "body")
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Profile, ProfileAdmin)
