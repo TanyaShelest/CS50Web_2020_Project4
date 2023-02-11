@@ -22,7 +22,16 @@
     <ul id="posts">
         <h3>All Posts</h3>
         {% for post in posts %}
-            <li><div><h4>{{ post.title }}</h4><p>{{ post.author.full_name }}</p><small>{{ post.created_at }}</small><br>{{ post.body }}</div></li>
+            <li>
+                <div class="post-container" data-post_id={{ post.id }}>
+                    <p>{{ post.author.full_name }}</p>
+                    <small>{{ post.created_at }}</small>
+                    <div class="post-body">{{ post.body }}</div>
+                    {% if post.author == user %}
+                    <a href="#" class="btn btn-sm btn-primary edit-post" data-post_id={{ post.id }} onclick="editPost(event)">Edit</a>
+                    {% endif %}
+                </div>
+            </li>
         {% endfor %}
-        </ul>
+    </ul>
 {% endblock %}

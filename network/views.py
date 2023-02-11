@@ -1,9 +1,13 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from datetime import datetime
+import json
 
 from .models import User, Profile, Post
 from .forms import PostForm
@@ -20,7 +24,7 @@ def index(request):
             post.author = request.user
             post.save()
 
-            messages.info(request, f'Your message here')
+            messages.info(request, f'Your message is here')
             return HttpResponseRedirect(reverse("index"))
             
 
@@ -85,8 +89,8 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
-def profile(request, id):
 
+def profile(request, id):
     user = request.user
     user_profile = Profile.objects.get(user=user)
     user_follows = user_profile.follows.all()
@@ -98,3 +102,20 @@ def profile(request, id):
         user_followers: user_followers,
         user_follows: user_follows, 
     })
+
+@login_required
+@ensure_csrf_cookie
+def edit_post(request, id):
+    
+    if request.method == 'PUT':
+        post = Post.objects.get(id=id)
+        data = json.loads(request.body)
+        post.body = data.get('data')
+        post.author = request.user
+        post.created_at = datetime.now()
+        post.save()
+
+        return JsonResponse({"message": "Ok"}, status=202)
+
+    else:
+        return JsonResponse({"message": request.method}, status=404)
