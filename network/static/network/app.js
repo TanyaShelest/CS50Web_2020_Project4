@@ -14,6 +14,7 @@ function getCookie(cname) {
     return "";
 }
 
+
 function showEditForm(postContainer, postId) {
     let editForm = `<form action="/edit_post/${postId}" method="put" id="editForm">    
                     <textarea name="body" cols="40" rows="10" id="editPost"></textarea>
@@ -28,14 +29,15 @@ function showEditForm(postContainer, postId) {
     postContainer.querySelector(".edit-post").style.display = "none"
 }
 
+
 function hideEditForm(postContainer) {
     postContainer.querySelector("#editForm").remove()
     postContainer.querySelector(".edit-post").style.display = "initial"
 
 }
 
-function editPost(event) {
 
+function editPost(event) {
     let postContainer = event.target.parentElement
     let postId = event.target.dataset.post_id
     let oldText = postContainer.querySelector(".post-body").innerText
@@ -63,6 +65,51 @@ function editPost(event) {
         event.preventDefault()
         hideEditForm(postContainer)
         postContainer.querySelector(".post-body").innerText = oldText
-    })
-    
+    })  
 }
+
+
+document.querySelector("form#newPost").addEventListener("submit", (event) => {
+    event.preventDefault()
+    console.log(event.target)
+    const csrftoken = getCookie('csrftoken')
+    let formData = event.target.parentElement.querySelector("textarea")
+
+    let posts = document.querySelector("#posts")
+    
+   
+    console.log(formData)
+
+    fetch('http://127.0.0.1:8000/new_post', {
+        method: 'POST',
+        headers: {"X-CSRFToken": csrftoken,
+                "Content-Type": "text/plain"},
+        body: JSON.stringify({data: formData.value})
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+        let newPostItem = document.createElement("li")
+        posts.prepend(newPostItem)
+        let newPostContainer = document.createElement("div")
+        newPostContainer.classList.add("post-container")
+        newPostItem.appendChild(newPostContainer)
+        let author = document.createElement("p")
+        author.textContent = data.author
+        let createdAt = document.createElement("small")
+        createdAt.textContent = data.created_at
+        let postBody = document.createElement("div")
+        postBody.textContent = data.body
+        let editButton = document.createElement("a")
+        editButton.textContent = "Edit"
+    
+        editButton.setAttribute("href", "#")
+        editButton.setAttribute("class", "btn btn-sm btn-primary edit-post")
+        editButton.setAttribute("onclick", "editPost(event)")
+        editButton.setAttribute("data-post_id", 'data.id')
+        newPostContainer.append(author, createdAt, postBody, editButton
+          
+        )
+      })
+      .then(formData.value = "")
+})

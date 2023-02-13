@@ -13,18 +13,18 @@
         {% endif %}
 
     <h3>Add New Post</h3>
-    <form action="{% url 'index' %}" method="post">
+    <form action="{% url 'new_post' %}" id="newPost" method="post">
         {% csrf_token %}        
-        {{ form }}
+        <textarea name="body" cols="40" rows="10" required></textarea>        
         <input class="btn btn-primary" type="submit" value="Post">
     </form>
 
+    <h3>All Posts</h3>
     <ul id="posts">
-        <h3>All Posts</h3>
         {% for post in posts %}
             <li>
                 <div class="post-container" data-post_id={{ post.id }}>
-                    <p>{{ post.author.full_name }}</p>
+                    <p>{{ post.author.username }}</p>
                     <small>{{ post.created_at }}</small>
                     <div class="post-body">{{ post.body }}</div>
                     {% if post.author == user %}
