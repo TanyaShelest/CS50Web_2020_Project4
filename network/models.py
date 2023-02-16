@@ -4,14 +4,10 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 
 class User(AbstractUser):
-    first_name = models.CharField(max_length=50, unique=False)
-    last_name = models.CharField(max_length=50, unique=False)
 
     def __str__(self):
-        return f"{self.id}: {self.first_name} {self.last_name}"
+        return f"{self.id}: {self.username}"
 
-    def full_name(self):
-        return f"{self.first_name} {self.last_name}"
 
 class Profile(models.Model):
     user = models.OneToOneField("User", on_delete=models.CASCADE)
