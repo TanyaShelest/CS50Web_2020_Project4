@@ -1,19 +1,30 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-<h2>Welcome, {{ user.username }}</h2>
+<h2>Welcome, {{ request.user.username }}</h2>
  <div>
-    {{ user.first_name }}, you have 
-    {% if user_followers|length %}
-        {{ followers_count }}
-    {% else %}
-        0
-    {% endif %}
+    {{ request.user.username }}, you have 
+        {{ user_followers|length }}
     followers
-    {{ user_followers.length }}</div>
+</div>
  <ul id="navigation">
     {% for user_follower in user_followers %}
-        <li>{{ user_follower.user_id }}</a></li>
+        <li>{{ user_follower.user.username }}</a></li>
     {% endfor %}
-    </ul>
+</ul>
+<div>
+    {{ request.user.username }}, you follow 
+        {{ user_follows|length }}
+    users
+</div>
+<ul id="navigation">
+    {% for user_follow in user_follows %}
+        <li>{{ user_follow.user.username }}</a></li>
+    {% endfor %}
+</ul>
+<ul id="navigation">
+    {% for post in user_posts %}
+        <li>{{ post.body }}</a></li>
+    {% endfor %}
+</ul>
 {% endblock %}

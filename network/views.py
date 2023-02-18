@@ -93,17 +93,17 @@ def register(request):
         return render(request, "network/register.html")
 
 
-def profile(request, id):
-    user = request.user
-    user_profile = Profile.objects.get(user=user)
+@login_required
+def profile(request, username):
+    user_profile = Profile.objects.get(user=request.user)
     user_follows = user_profile.follows.all()
     user_followers = user_profile.followed_by.all()
-
-    followers_count = user_followers.count()
+    user_posts = Post.objects.filter(author=request.user).order_by("-created_at")
+    
     return render(request, "network/profile.html", {
-        "user": user,
         "user_followers": user_followers,
-        "user_follows": user_follows, 
+        "user_follows": user_follows,
+        "user_posts": user_posts 
     })
 
 
@@ -130,7 +130,7 @@ def following(request):
     posts = Post.objects.filter(
         author__in=user_profile.follows.all()
         .values("user")).order_by('-created_at')
-        
+
     return render(request, "network/following.html", {
         "user_profile": user_profile,
         "posts": posts,
