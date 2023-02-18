@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.db import IntegrityError
+from django.db.models.lookups import In
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
@@ -100,9 +101,9 @@ def profile(request, id):
 
     followers_count = user_followers.count()
     return render(request, "network/profile.html", {
-        user: user,
-        user_followers: user_followers,
-        user_follows: user_follows, 
+        "user": user,
+        "user_followers": user_followers,
+        "user_follows": user_follows, 
     })
 
 
@@ -121,3 +122,16 @@ def edit_post(request, id):
 
     else:
         return JsonResponse({"message": request.method}, status=404)
+
+
+@login_required
+def following(request):
+    user_profile = Profile.objects.get(user_id=request.user.id)
+    posts = Post.objects.filter(
+        author__in=user_profile.follows.all()
+        .values("user")).order_by('-created_at')
+        
+    return render(request, "network/following.html", {
+        "user_profile": user_profile,
+        "posts": posts,
+    })

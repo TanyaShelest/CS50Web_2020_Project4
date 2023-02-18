@@ -1,0 +1,11 @@
+{% extends "network/layout.html" %}
+
+<h2>Welcome, {{ user_profile.id }}</h2>
+{% block body %}
+<ul unstyled>
+   {% for post in posts %} 
+   <p>{{ post.created_at }}</p>
+   <li>{{ post.body}}</li>
+</ul>
+{% endfor %}
+{% endblock %}
