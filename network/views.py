@@ -1,5 +1,4 @@
 from django.contrib.auth import authenticate, login, logout
-from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models.lookups import In
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -8,7 +7,6 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from datetime import datetime
-from django.core import serializers
 import json
 
 from .models import User, Profile, Post
@@ -95,15 +93,24 @@ def register(request):
 
 @login_required
 def profile(request, username):
-    user_profile = Profile.objects.get(user=request.user)
+    user = User.objects.get(username=username)
+    user_profile = Profile.objects.get(user=user)
     user_follows = user_profile.follows.all()
     user_followers = user_profile.followed_by.all()
-    user_posts = Post.objects.filter(author=request.user).order_by("-created_at")
-    
+    user_posts = Post.objects.filter(author=user).order_by("-created_at")
+    request_user_profile = Profile.objects.get(user=request.user)
+    function_to_call = ''
+    if request_user_profile.follows.contains(user.profile):
+        function_to_call = "unfollow"
+    else:
+        function_to_call = "follow"
+
     return render(request, "network/profile.html", {
+        "user_profile": user_profile,
         "user_followers": user_followers,
         "user_follows": user_follows,
-        "user_posts": user_posts 
+        "user_posts": user_posts,
+        "function_to_call": function_to_call
     })
 
 
@@ -135,3 +142,36 @@ def following(request):
         "user_profile": user_profile,
         "posts": posts,
     })
+
+
+@ensure_csrf_cookie
+@login_required
+def follow(request):
+    if request.method == "POST":
+        request_user_profile = Profile.objects.get(user=request.user)
+        data = json.loads(request.body)
+        user_profile_id = data.get("data")
+        user_profile = Profile.objects.get(id=user_profile_id)
+        request_user_profile.follows.add(user_profile)
+
+
+        return JsonResponse({"message": "Ok"}, status=202)
+    else:
+        return JsonResponse({"message": "Must be POST request"}, status=403)
+
+
+@ensure_csrf_cookie
+@login_required
+def unfollow(request):
+    if request.method == "POST":
+
+        request_user_profile = Profile.objects.get(user=request.user)
+        data = json.loads(request.body)
+        user_profile_id = data.get("data")        
+        user_profile = Profile.objects.get(id=user_profile_id)
+
+        request_user_profile.follows.remove(user_profile)
+
+        return JsonResponse({"message": "Ok"}, status=202)
+    else:
+        return JsonResponse({"message": "Must be POST request"}, status=403)

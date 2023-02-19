@@ -1,30 +1,23 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-<h2>Welcome, {{ request.user.username }}</h2>
- <div>
-    {{ request.user.username }}, you have 
-        {{ user_followers|length }}
-    followers
+<h2>{{ user_profile.user.username }}</h2>
+{% if user != user_profile.user %}
+    <input class="btn btn-primary" type="submit" data-user_profile={{ user_profile.id }} value="{{ function_to_call }}" onclick="{{ function_to_call }}(event)"/>
+{% endif %}
+<div> 
+    followers {{ user_followers|length }} 
 </div>
- <ul id="navigation">
-    {% for user_follower in user_followers %}
-        <li>{{ user_follower.user.username }}</a></li>
-    {% endfor %}
-</ul>
 <div>
-    {{ request.user.username }}, you follow 
-        {{ user_follows|length }}
-    users
+    following {{ user_follows|length }}
 </div>
-<ul id="navigation">
-    {% for user_follow in user_follows %}
-        <li>{{ user_follow.user.username }}</a></li>
-    {% endfor %}
-</ul>
+<h3>Your posts</h3>
 <ul id="navigation">
     {% for post in user_posts %}
-        <li>{{ post.body }}</a></li>
+        <li>
+            <small>{{ post.created_at }}</small>
+            <p>{{ post.body }}</p>
+        </li>
     {% endfor %}
 </ul>
 {% endblock %}

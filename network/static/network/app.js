@@ -69,6 +69,40 @@ function editPost(event) {
 }
 
 
+function follow(event) {
+    event.preventDefault()
+    const csrftoken = getCookie('csrftoken')
+
+    console.log(event.target.dataset.user_profile)
+    fetch('http://127.0.0.1:8000/follow', {
+        method: 'POST',
+        headers: {
+            "X-CSRFToken": csrftoken
+        },
+        body: JSON.stringify({data: event.target.dataset.user_profile})
+      })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .then(event.target.value = "unfollow")
+}
+
+function unfollow(event) {
+    event.preventDefault()
+    const csrftoken = getCookie('csrftoken')
+
+    console.log(event.target.dataset.user_profile)
+    fetch('http://127.0.0.1:8000/unfollow', {
+        method: 'POST',
+        headers: {
+            "X-CSRFToken": csrftoken
+        },
+        body: JSON.stringify({data: event.target.dataset.user_profile})
+      })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .then(event.target.value = "follow")
+}
+
 document.querySelector("form#newPost").addEventListener("submit", (event) => {
     event.preventDefault()
     console.log(event.target)

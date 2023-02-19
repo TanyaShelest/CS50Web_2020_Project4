@@ -4,8 +4,9 @@
 {% block body %}
 <ul unstyled>
    {% for post in posts %} 
-   <p>{{ post.created_at }}</p>
-   <li>{{ post.body}}</li>
+      <p><a href="{% url 'profile' username=post.author.username %}">{{ post.author.username }}</a></p>
+      <small>{{ post.created_at }}</small>
+      <div class="post-body">{{ post.body }}</div>
 </ul>
 {% endfor %}
 {% endblock %}
