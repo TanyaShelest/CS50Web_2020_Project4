@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.core.paginator import Paginator
 from django.db import IntegrityError
 from django.db.models.lookups import In
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -14,9 +15,14 @@ from .forms import PostForm
 
 
 def index(request):
-     # if this is a POST request we need to process the form data
+    posts = Post.objects.order_by('-created_at')
+    paginator = Paginator(posts, 10)
+
+    current_page = request.GET.get('page')
+    page = paginator.get_page(current_page)
+
     return render(request, "network/index.html", {
-        "posts": Post.objects.order_by('-created_at'),
+        "posts": page,
     })
 
 
@@ -137,10 +143,13 @@ def following(request):
     posts = Post.objects.filter(
         author__in=user_profile.follows.all()
         .values("user")).order_by('-created_at')
+    paginator = Paginator(posts, 10)
+    current_page = request.GET.get('page')
+    page = paginator.get_page(current_page)
 
     return render(request, "network/following.html", {
         "user_profile": user_profile,
-        "posts": posts,
+        "posts": page,
     })
 
 
