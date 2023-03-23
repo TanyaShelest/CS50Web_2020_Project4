@@ -1,20 +1,13 @@
 from django.contrib import admin
 
-from .models import Post, User, Profile
-
-
-class UserAdmin(admin.ModelAdmin):
-    pass
-
-
-class ProfileAdmin(admin.ModelAdmin):
-    pass
+from .models import Post, User, Profile, Like
 
 
 class PostAdmin(admin.ModelAdmin):
     list_display = ("author", "body")
-    fields = ("author", "body")
+    fields = ("author", "body", "number_of_likes")
 
-admin.site.register(User, UserAdmin)
-admin.site.register(Profile, ProfileAdmin)
+admin.site.register(User)
+admin.site.register(Profile)
 admin.site.register(Post, PostAdmin)
+admin.site.register(Like)

@@ -1,7 +1,7 @@
-
 from django.urls import path
-
+from django.contrib.auth import views as auth_views
 from . import views
+
 
 urlpatterns = [
     path("", views.index, name="index"),
@@ -13,5 +13,6 @@ urlpatterns = [
     path("edit_post/<int:id>", views.edit_post, name="edit_post"),
     path("following", views.following, name="following"),
     path("follow", views.follow, name="follow"),
-    path("unfollow", views.unfollow, name="unfollow")
+    path("unfollow", views.unfollow, name="unfollow"),
+    path("like_post", views.like_post, name="like_post"),
 ]

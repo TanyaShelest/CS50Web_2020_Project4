@@ -24,13 +24,17 @@ class Profile(models.Model):
     def __str__(self):
             return self.user.username
 
+
 class Post(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="author")
     body = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    number_of_likes = models.IntegerField(default=0)
+    user_likes = models.ManyToManyField(User)
 
     def __str__(self):
         return self.body
+
 
 class Like(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)

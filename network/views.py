@@ -1,17 +1,14 @@
 from django.contrib.auth import authenticate, login, logout
 from django.core.paginator import Paginator
 from django.db import IntegrityError
-from django.db.models.lookups import In
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie
 from datetime import datetime
 import json
-
-from .models import User, Profile, Post
-from .forms import PostForm
+from .models import User, Profile, Post, Like
 
 
 def index(request):
@@ -184,3 +181,28 @@ def unfollow(request):
         return JsonResponse({"message": "Ok"}, status=202)
     else:
         return JsonResponse({"message": "Must be POST request"}, status=403)
+
+
+@login_required
+def like_post(request):
+    data = json.loads(request.body)
+    post_id = data.get("data")
+    post = Post.objects.get(id=post_id)
+
+    liked = Like.objects.filter(post=post, author=request.user)
+
+    if not liked: 
+        like = Like.objects.create(post=post, author=request.user)
+        like.save()
+        post.number_of_likes += 1
+        post.user_likes.add(request.user)
+        post.save()
+        return JsonResponse({"number_of_likes": post.number_of_likes}, status=200)
+    else:
+        liked.delete()
+        post.number_of_likes -= 1
+        post.user_likes.remove(request.user)
+        post.save()
+        return JsonResponse({"number_of_likes": post.number_of_likes}, status=200)
+
+

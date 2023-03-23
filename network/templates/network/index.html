@@ -29,6 +29,16 @@
                     <p><a href="{% url 'profile' username=post.author.username %}">{{ post.author.username }}</a></p>
                     <small>{{ post.created_at }}</small>
                     <div class="post-body">{{ post.body }}</div>
+                    <small class="likes-counter">{{ post.number_of_likes }} </small>
+                    {% if user in post.user_likes.all %}
+                    <ion-icon class="active" name="heart">
+                        <div class='red-bg'></div>
+                    </ion-icon>
+                    {% else %}
+                    <ion-icon name="heart">
+                        <div class='red-bg'></div>
+                    </ion-icon>
+                    {% endif %}
                     {% if post.author == user %}
                     <a href="#" class="btn btn-sm btn-primary edit-post" data-post_id={{ post.id }} onclick="editPost(event)">Edit</a>
                     {% endif %}
