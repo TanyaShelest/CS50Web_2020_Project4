@@ -31,11 +31,11 @@ def new_post(request):
         post = Post.objects.create(body=data.get('data'), author=request.user)
         post.save()
         post_obj = {
-            "id": post.id, 
-            "body": post.body, 
-            "author": post.author.username, 
+            "id": post.id,
+            "body": post.body,
+            "author": post.author.username,
             "created_at": post.created_at.strftime("%B %d, %Y, %H:%M")
-            }
+        }
         return JsonResponse(post_obj, status=202)
 
     else:
@@ -160,7 +160,6 @@ def follow(request):
         user_profile = Profile.objects.get(id=user_profile_id)
         request_user_profile.follows.add(user_profile)
 
-
         return JsonResponse({"message": "Ok"}, status=202)
     else:
         return JsonResponse({"message": "Must be POST request"}, status=403)
@@ -173,7 +172,7 @@ def unfollow(request):
 
         request_user_profile = Profile.objects.get(user=request.user)
         data = json.loads(request.body)
-        user_profile_id = data.get("data")        
+        user_profile_id = data.get("data")
         user_profile = Profile.objects.get(id=user_profile_id)
 
         request_user_profile.follows.remove(user_profile)
@@ -191,7 +190,7 @@ def like_post(request):
 
     liked = Like.objects.filter(post=post, author=request.user)
 
-    if not liked: 
+    if not liked:
         like = Like.objects.create(post=post, author=request.user)
         like.save()
         post.number_of_likes += 1
@@ -204,5 +203,3 @@ def like_post(request):
         post.user_likes.remove(request.user)
         post.save()
         return JsonResponse({"number_of_likes": post.number_of_likes}, status=200)
-
-

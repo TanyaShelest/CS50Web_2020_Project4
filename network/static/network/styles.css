@@ -1,28 +1,63 @@
-#posts {
-    max-width: 50%;
-}
-
 .large-font{
     font-size:xxx-large;
   }
-  .top-20{
-    position:relative;
-    top:20vh;
-  }
-  ion-icon.active{
-    animation:like 0.5s 1;
-    fill:red;
-    stroke:none;
-  }
-  ion-icon{
-    fill:transparent;
-    stroke:black;
-    stroke-width:30;
-    transition:all 0.5s;
-  }
-  
-  @-webkit-keyframes like {
-    0%   { transform: scale(1); }
-    90%   { transform: scale(1.2); }
-    100% { transform: scale(1.1); }
-  }
+
+.top-20{
+  position:relative;
+  top:20vh;
+}
+
+ion-icon.active{
+  animation:like 0.5s 1;
+  fill:rgb(78, 78, 78);
+  stroke:none;
+}
+
+ion-icon{
+  fill:transparent;
+  stroke:black;
+  stroke-width:30;
+  transition:all 0.5s;
+}
+
+@-webkit-keyframes like {
+  0%   { transform: scale(1); }
+  90%   { transform: scale(1.2); }
+  100% { transform: scale(1.1); }
+}
+
+a, a:hover {
+  color:darkgreen;
+}
+
+.page-content {
+  display: table;
+}
+
+.sidebar {
+  background: #52a557;
+  display: table-cell;
+  height: 100vh;
+  width: 300px;
+  box-shadow: 5px -1px 0px 0px rgba(231,166,26,0.53);
+}
+
+.page-link {
+  background-color: rgb(37, 160, 37) !important;
+}
+
+.page-link.active {
+  border-color: white !important;
+}
+
+.pagination a {
+  color: white;
+}
+
+.pagination a:hover {
+  color: #87eba8;
+}
+
+.page-link:hover {
+  background-color: darkgreen !important;
+}

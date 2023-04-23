@@ -17,8 +17,8 @@ function getCookie(cname) {
 function showEditForm(postContainer, postId) {
   let editForm = `<form action="/edit_post/${postId}" method="put" id="editForm">    
                     <textarea name="body" cols="40" rows="10" id="editPost"></textarea>
-                        <input class="btn btn-primary" id="saveChanges" data-id="${postId}" type="submit" value="Save">
-                        <input class="btn btn-primary" id="cancelChanges" type="submit" value="Cancel">
+                        <input class="btn btn-success rounded-pill" id="saveChanges" data-id="${postId}" type="submit" value="Save">
+                        <input class="btn btn-outline-success rounded-pill" id="cancelChanges" type="submit" value="Cancel">
                     </form>`
   postContainer.insertAdjacentHTML("beforeend", editForm)
   let newText = postContainer.querySelector("#editPost")
@@ -69,7 +69,6 @@ function editPost(event) {
     })
 }
 
-
 let likeIcons = document.querySelectorAll("ion-icon")
 likeIcons.forEach((likeIcon) =>
   likeIcon.addEventListener("click", (event) => {
@@ -87,16 +86,16 @@ likeIcons.forEach((likeIcon) =>
       body: JSON.stringify({ data: postId }),
     })
       .then((response) => response.text())
-      .then(text => {
+      .then((text) => {
         try {
-            const data = JSON.parse(text)
-            likesCounter.innerText = data["number_of_likes"]
-            likeIcon.classList.toggle("active")
-        } catch(error) {
-            alert("Something went wrong")
+          const data = JSON.parse(text)
+          likesCounter.innerText = data["number_of_likes"]
+          likeIcon.classList.toggle("active")
+        } catch (error) {
+          alert("Something went wrong")
         }
       })
-  })
+  }),
 )
 
 function follow(event) {
@@ -111,7 +110,7 @@ function follow(event) {
     body: JSON.stringify({ data: event.target.dataset.user_profile }),
   })
     .then((response) => response.json())
-    .then((event.target.value = "unfollow"))
+    .then((event.target.value = "Unfollow"))
 }
 
 function unfollow(event) {
@@ -126,14 +125,13 @@ function unfollow(event) {
     body: JSON.stringify({ data: event.target.dataset.user_profile }),
   })
     .then((response) => response.json())
-    .then((event.target.value = "follow"))
+    .then((event.target.value = "Follow"))
 }
 
 document.querySelector("form#newPost").addEventListener("submit", (event) => {
   event.preventDefault()
   const csrftoken = getCookie("csrftoken")
   let formData = event.target.parentElement.querySelector("textarea")
-
   let posts = document.querySelector("#posts")
 
   fetch("http://127.0.0.1:8000/new_post", {
@@ -161,7 +159,10 @@ document.querySelector("form#newPost").addEventListener("submit", (event) => {
       editButton.textContent = "Edit"
 
       editButton.setAttribute("href", "#")
-      editButton.setAttribute("class", "btn btn-sm btn-primary edit-post")
+      editButton.setAttribute(
+        "class",
+        "btn btn-sm btn-success rounded-pill edit-post",
+      )
       editButton.setAttribute("onclick", "editPost(event)")
       editButton.setAttribute("data-post_id", "data.id")
       newPostContainer.append(author, createdAt, postBody, editButton)

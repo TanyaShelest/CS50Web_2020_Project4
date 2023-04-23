@@ -1,68 +1,67 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-
-    {% if messages %}
-        {% for message in messages %}
-        <div{% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert"{% endif %}>{{ message }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+<div class="container mx-5 justify-content-center">
+    <div class="col-10 ml-2">
+        {% if user.is_authenticated %}
+        <h2 class="mx-5 my-4">Add New Post</h2>
+        <div class="">
+            <form action="{% url 'new_post' %}" id="newPost" method="post">
+                {% csrf_token %}
+                <textarea class="form-control" name="body" required
+                    placeholder="What are you thinking about?"></textarea>
+                <input class="btn btn-success rounded-pill mt-3" type="submit" value="Post">
+            </form>
         </div>
-        {% endfor %}
         {% endif %}
 
-    {% if user.is_authenticated %}
-    <h3>Add New Post</h3>
-    <form action="{% url 'new_post' %}" id="newPost" method="post">
-        {% csrf_token %}        
-        <textarea name="body" cols="40" rows="10" required></textarea>        
-        <input class="btn btn-primary" type="submit" value="Post">
-    </form>
-    {% endif %}
-    
-    <h3>All Posts</h3>
-    <ul id="posts">
-        {% for post in posts %}
-            <li>
+        <h2 class="mx-5 my-4">All Posts</h2>
+        <ul class="list-group" id="posts">
+            {% for post in posts %}
+            <li class="list-group-item bg-light mb-2">
                 <div class="post-container" data-post_id={{ post.id }}>
-                    <p><a href="{% url 'profile' username=post.author.username %}">{{ post.author.username }}</a></p>
+                    <p>
+                        <a href="{% url 'profile' username=post.author.username %}" class="h5">{{ post.author.username}}</a>
+                    </p>
                     <small>{{ post.created_at }}</small>
                     <div class="post-body">{{ post.body }}</div>
                     <small class="likes-counter">{{ post.number_of_likes }} </small>
                     {% if user in post.user_likes.all %}
-                    <ion-icon class="active" name="heart">
-                        <div class='red-bg'></div>
-                    </ion-icon>
+                        <ion-icon class="active" name="heart">
+                            <div class='red-bg'></div>
+                        </ion-icon>
                     {% else %}
-                    <ion-icon name="heart">
-                        <div class='red-bg'></div>
-                    </ion-icon>
+                        <ion-icon name="heart">
+                            <div class='red-bg'></div>
+                        </ion-icon>
                     {% endif %}
                     {% if post.author == user %}
-                    <a href="#" class="btn btn-sm btn-primary edit-post" data-post_id={{ post.id }} onclick="editPost(event)">Edit</a>
+                        <a href="#" class="btn btn-md btn-success rounded-pill m-2 edit-post" data-post_id={{ post.id }}
+                        onclick="editPost(event)">Edit</a>
                     {% endif %}
                 </div>
             </li>
-        {% endfor %}
-    </ul>
-
-    <div class="pagination">
-        <span class="step-links">
+            {% endfor %}
+        </ul>
+        <ul class="pagination justify-content-center">
             {% if posts.has_previous %}
-                <a href="?page=1">&laquo; first</a>
-                <a href="?page={{ posts.previous_page_number }}">previous</a>
+                {% if posts.previous_page_number == 1 %}
+                    <li class="page-item"><a href="?page=1" class="page-link">&laquo;</a></li>
+                {% else %}
+                    <li class="page-item"><a href="?page=1" class="page-link">&laquo;</a></li>
+                    <li class="page-item"><a href="?page={{ posts.previous_page_number }}" class="page-link">&lsaquo;</a></li>
+                {% endif %}
             {% endif %}
-    
-            <span class="current">
-                Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
-            </span>
-    
+            <li class="page-item active"><a href="?page={{ posts.number }}" class="page-link active">{{ posts.number}}</a></li>
             {% if posts.has_next %}
-                <a href="?page={{ posts.next_page_number }}">next</a>
-                <a href="?page={{ posts.paginator.num_pages }}">last &raquo;</a>
+                {% if posts.next_page_number == posts.paginator.num_pages %}
+                    <li class="page-item"><a href="?page={{ posts.paginator.num_pages }}" class="page-link"> &raquo;</a></li>
+                {% else %}
+                    <li class="page-item"><a href="?page={{ posts.next_page_number }}" class="page-link">&rsaquo;</a></li>
+                    <li class="page-item"><a href="?page={{ posts.paginator.num_pages }}" class="page-link">&raquo;</a></li>
+                {% endif %}
             {% endif %}
-        </span>
+        </ul>
     </div>
+</div>
 {% endblock %}
-

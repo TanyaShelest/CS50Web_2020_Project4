@@ -1,29 +1,51 @@
 {% extends "network/layout.html" %}
 
-<h2>Welcome, {{ user_profile.id }}</h2>
 {% block body %}
-<ul unstyled>
-   {% for post in posts %} 
-      <p><a href="{% url 'profile' username=post.author.username %}">{{ post.author.username }}</a></p>
-      <small>{{ post.created_at }}</small>
-      <div class="post-body">{{ post.body }}</div>
-   {% endfor %}
-</ul>
-   <div class="pagination">
-      <span class="step-links">
-          {% if posts.has_previous %}
-              <a href="?page=1">&laquo; first</a>
-              <a href="?page={{ posts.previous_page_number }}">previous</a>
-          {% endif %}
-  
-          <span class="current">
-              Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
-          </span>
-  
-          {% if posts.has_next %}
-              <a href="?page={{ posts.next_page_number }}">next</a>
-              <a href="?page={{ posts.paginator.num_pages }}">last &raquo;</a>
-          {% endif %}
-      </span>
-  </div>
+<div class="container mx-5 justify-content-center">
+    <div class="col-10 ml-2">
+        <h2 class="mx-5 my-4">Following</h2>
+        <ul class="list-group" id="posts">
+            {% for post in posts %}
+            <li class="list-group-item bg-light mb-2">
+                <div class="post-container" data-post_id={{ post.id }}>
+                    <p>
+                        <a href="{% url 'profile' username=post.author.username %}" class="h5">{{ post.author.username}}</a>
+                    </p>
+                    <small>{{ post.created_at }}</small>
+                    <div class="post-body">{{ post.body }}</div>
+                    <small class="likes-counter">{{ post.number_of_likes }} </small>
+                    {% if user in post.user_likes.all %}
+                        <ion-icon class="active mt-2" name="heart">
+                            <div class="red-bg mt-2"></div>
+                        </ion-icon>
+                    {% else %}
+                        <ion-icon name="heart">
+                            <div class="red-bg"></div>
+                        </ion-icon>
+                    {% endif %}
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        <ul class="pagination justify-content-center">
+            {% if posts.has_previous %}
+                {% if posts.previous_page_number == 1 %}
+                    <li class="page-item"><a href="?page=1" class="page-link">&laquo;</a></li>
+                {% else %}
+                    <li class="page-item"><a href="?page=1" class="page-link">&laquo;</a></li>
+                    <li class="page-item"><a href="?page={{ posts.previous_page_number }}" class="page-link">&lsaquo;</a></li>
+                {% endif %}
+            {% endif %}
+            <li class="page-item active"><a href="?page={{ posts.number }}" class="page-link active">{{ posts.number}}</a></li>
+            {% if posts.has_next %}
+                {% if posts.next_page_number == posts.paginator.num_pages %}
+                    <li class="page-item"><a href="?page={{ posts.paginator.num_pages }}" class="page-link"> &raquo;</a></li>
+                {% else %}
+                    <li class="page-item"><a href="?page={{ posts.next_page_number }}" class="page-link">&rsaquo;</a></li>
+                    <li class="page-item"><a href="?page={{ posts.paginator.num_pages }}" class="page-link">&raquo;</a></li>
+                {% endif %}
+            {% endif %}
+        </ul>
+    </div>
+</div>
 {% endblock %}

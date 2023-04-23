@@ -1,23 +1,49 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-<h2>{{ user_profile.user.username }}</h2>
-{% if user != user_profile.user %}
-    <input class="btn btn-primary" type="submit" data-user_profile={{ user_profile.id }} value="{{ function_to_call }}" onclick="{{ function_to_call }}(event)"/>
-{% endif %}
-<div> 
-    followers {{ user_followers|length }} 
+<div class="container mx-5 justify-content-center">
+    <div class="col-10">
+        <h2 class="mx-5 my-3">{{ user_profile.user.username }}</h2>
+        {% if user != user_profile.user %}
+            <input class="btn btn-success rounded-pill mx-5 my-3" type="submit" data-user_profile={{ user_profile.id }}
+            value="{{ function_to_call|capfirst }}" onclick="{{ function_to_call }}(event)" />
+        {% endif %}
+        <div class="row ml-1">
+            <div class="col-md-auto py-2 border border-warning rounded">
+                <div class="mx-5">
+                    Followers {{ user_followers|length }}
+                </div>
+                <div class="mx-5">
+                    Following {{ user_follows|length }}
+                </div>
+            </div>
+        </div>
+
+        <h3 class="mx-5 my-3">{{ user_profile.user.username}}'s Posts</h3>
+        <ul class="list-group" id="navigation">
+            {% for post in user_posts %}
+            <li class="list-group-item">
+                <div class="post-container" data-post_id={{ post.id }}>
+                    <small>{{ post.created_at }}</small>
+                    <p>{{ post.body }}</p>
+                    <small class="likes-counter">{{ post.number_of_likes }} </small>
+                    {% if user in post.user_likes.all %}
+                        <ion-icon class="active" name="heart">
+                            <div class='red-bg'></div>
+                        </ion-icon>
+                    {% else %}
+                        <ion-icon name="heart">
+                            <div class='red-bg'></div>
+                        </ion-icon>
+                    {% endif %}
+                    {% if post.author == user %}
+                        <a href="#" class="btn btn-md btn-success rounded-pill m-2 edit-post" data-post_id={{ post.id }}
+                        onclick="editPost(event)">Edit</a>
+                    {% endif %}
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
-<div>
-    following {{ user_follows|length }}
-</div>
-<h3>Your posts</h3>
-<ul id="navigation">
-    {% for post in user_posts %}
-        <li>
-            <small>{{ post.created_at }}</small>
-            <p>{{ post.body }}</p>
-        </li>
-    {% endfor %}
-</ul>
 {% endblock %}
