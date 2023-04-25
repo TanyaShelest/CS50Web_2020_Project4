@@ -146,26 +146,45 @@ document.querySelector("form#newPost").addEventListener("submit", (event) => {
     .then((data) => {
       let newPostItem = document.createElement("li")
       posts.prepend(newPostItem)
+      newPostItem.classList.add("list-group-item")
+      newPostItem.classList.add("bg-light")
+      newPostItem.classList.add("mb-2")
       let newPostContainer = document.createElement("div")
       newPostContainer.classList.add("post-container")
       newPostItem.appendChild(newPostContainer)
       let author = document.createElement("p")
-      author.textContent = data.author
+      author.insertAdjacentHTML(
+        "afterbegin",
+        `<a href="/profile/${data.author}" class="h5">${data.author}</a>`,
+      )
       let createdAt = document.createElement("small")
       createdAt.textContent = data.created_at
       let postBody = document.createElement("div")
       postBody.textContent = data.body
+      let likesCount = document.createElement("small")
+      likesCount.classList.add("likes-counter")
+      likesCount.textContent = "0"
+      let heart = document.createElement("ion-icon")
+      heart.setAttribute("name", "heart")
+      heart.insertAdjacentHTML("afterbegin", "<div class='red-bg'></div>")
       let editButton = document.createElement("a")
       editButton.textContent = "Edit"
-
       editButton.setAttribute("href", "#")
       editButton.setAttribute(
         "class",
-        "btn btn-sm btn-success rounded-pill edit-post",
+        "btn btn-md btn-success m-2 rounded-pill edit-post",
       )
       editButton.setAttribute("onclick", "editPost(event)")
       editButton.setAttribute("data-post_id", "data.id")
-      newPostContainer.append(author, createdAt, postBody, editButton)
+      newPostContainer.append(
+        author,
+        createdAt,
+        postBody,
+        likesCount,
+        heart,
+        editButton,
+      )
+      newPostItem.append(newPostContainer)
     })
     .then((formData.value = ""))
 })
