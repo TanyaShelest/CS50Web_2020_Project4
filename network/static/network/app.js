@@ -146,9 +146,7 @@ document.querySelector("form#newPost").addEventListener("submit", (event) => {
     .then((data) => {
       let newPostItem = document.createElement("li")
       posts.prepend(newPostItem)
-      newPostItem.classList.add("list-group-item")
-      newPostItem.classList.add("bg-light")
-      newPostItem.classList.add("mb-2")
+      newPostItem.setAttribute("list-group-item bg-light mb-2")
       let newPostContainer = document.createElement("div")
       newPostContainer.classList.add("post-container")
       newPostItem.appendChild(newPostContainer)

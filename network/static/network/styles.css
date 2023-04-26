@@ -18,6 +18,7 @@ ion-icon{
   stroke:black;
   stroke-width:30;
   transition:all 0.5s;
+  margin-left: 5px;
 }
 
 @-webkit-keyframes like {
