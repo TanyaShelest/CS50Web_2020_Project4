@@ -102,18 +102,18 @@ def profile(request, username):
     user_followers = user_profile.followed_by.all()
     user_posts = Post.objects.filter(author=user).order_by("-created_at")
     request_user_profile = Profile.objects.get(user=request.user)
-    function_to_call = ''
+    follow_button_value = ''
     if request_user_profile.follows.contains(user.profile):
-        function_to_call = "unfollow"
+        follow_button_value = "Unfollow"
     else:
-        function_to_call = "follow"
+        follow_button_value = "Follow"
 
     return render(request, "network/profile.html", {
         "user_profile": user_profile,
         "user_followers": user_followers,
         "user_follows": user_follows,
         "user_posts": user_posts,
-        "function_to_call": function_to_call
+        "follow_button_value": follow_button_value
     })
 
 
@@ -150,34 +150,42 @@ def following(request):
     })
 
 
+# @ensure_csrf_cookie
+# @login_required
+# def follow(request):
+#     if request.method == "POST":
+#         request_user_profile = Profile.objects.get(user=request.user)
+#         data = json.loads(request.body)
+#         user_profile_id = data.get("data")
+#         user_profile = Profile.objects.get(id=user_profile_id)
+#         request_user_profile.follows.add(user_profile)
+
+#         return JsonResponse({"message": "Ok"}, status=202)
+#     else:
+#         return JsonResponse({"message": "Must be POST request"}, status=403)
+
+
 @ensure_csrf_cookie
 @login_required
 def follow(request):
     if request.method == "POST":
-        request_user_profile = Profile.objects.get(user=request.user)
-        data = json.loads(request.body)
-        user_profile_id = data.get("data")
-        user_profile = Profile.objects.get(id=user_profile_id)
-        request_user_profile.follows.add(user_profile)
-
-        return JsonResponse({"message": "Ok"}, status=202)
-    else:
-        return JsonResponse({"message": "Must be POST request"}, status=403)
-
-
-@ensure_csrf_cookie
-@login_required
-def unfollow(request):
-    if request.method == "POST":
 
         request_user_profile = Profile.objects.get(user=request.user)
         data = json.loads(request.body)
         user_profile_id = data.get("data")
         user_profile = Profile.objects.get(id=user_profile_id)
 
-        request_user_profile.follows.remove(user_profile)
+        follows = request_user_profile.follows.contains(user_profile)
 
-        return JsonResponse({"message": "Ok"}, status=202)
+        if not follows:
+            request_user_profile.follows.add(user_profile)
+            request_user_profile.save()
+            return JsonResponse({"value": "Unfollow"}, status=200)
+        else:
+            request_user_profile.follows.remove(user_profile)
+            request_user_profile.save()
+            return JsonResponse({"value": "Follow"}, status=200)
+
     else:
         return JsonResponse({"message": "Must be POST request"}, status=403)
 

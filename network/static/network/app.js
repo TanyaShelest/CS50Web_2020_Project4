@@ -109,8 +109,15 @@ function follow(event) {
     },
     body: JSON.stringify({ data: event.target.dataset.user_profile }),
   })
-    .then((response) => response.json())
-    .then((event.target.value = "Unfollow"))
+    .then((response) => response.text())
+    .then((text) => {
+      try {
+        const data = JSON.parse(text)
+        event.target.value = data["value"]
+      } catch (error) {
+        alert("Something went wrong")
+      }
+    })
 }
 
 function unfollow(event) {
