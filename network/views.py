@@ -98,11 +98,11 @@ def register(request):
 def profile(request, username):
     user = User.objects.get(username=username)
     user_profile = Profile.objects.get(user=user)
-    user_follows = user_profile.follows.all()
-    user_followers = user_profile.followed_by.all()
     user_posts = Post.objects.filter(author=user).order_by("-created_at")
     request_user_profile = Profile.objects.get(user=request.user)
+
     follow_button_value = ''
+
     if request_user_profile.follows.contains(user.profile):
         follow_button_value = "Unfollow"
     else:
@@ -110,8 +110,6 @@ def profile(request, username):
 
     return render(request, "network/profile.html", {
         "user_profile": user_profile,
-        "user_followers": user_followers,
-        "user_follows": user_follows,
         "user_posts": user_posts,
         "follow_button_value": follow_button_value
     })
@@ -150,26 +148,10 @@ def following(request):
     })
 
 
-# @ensure_csrf_cookie
-# @login_required
-# def follow(request):
-#     if request.method == "POST":
-#         request_user_profile = Profile.objects.get(user=request.user)
-#         data = json.loads(request.body)
-#         user_profile_id = data.get("data")
-#         user_profile = Profile.objects.get(id=user_profile_id)
-#         request_user_profile.follows.add(user_profile)
-
-#         return JsonResponse({"message": "Ok"}, status=202)
-#     else:
-#         return JsonResponse({"message": "Must be POST request"}, status=403)
-
-
 @ensure_csrf_cookie
 @login_required
 def follow(request):
     if request.method == "POST":
-
         request_user_profile = Profile.objects.get(user=request.user)
         data = json.loads(request.body)
         user_profile_id = data.get("data")

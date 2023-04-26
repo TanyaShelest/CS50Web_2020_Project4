@@ -11,10 +11,10 @@
         <div class="row ml-1">
             <div class="col-md-auto py-2 border border-warning rounded">
                 <div class="mx-5">
-                    Followers {{ user_followers|length }}
+                    Followers {{ user_profile.followed_by.all|length }}
                 </div>
                 <div class="mx-5">
-                    Following {{ user_follows|length }}
+                    Following {{ user_profile.follows.all|length }}
                 </div>
             </div>
         </div>
