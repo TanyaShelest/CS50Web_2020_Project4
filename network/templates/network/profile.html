@@ -24,7 +24,7 @@
             {% for post in user_posts %}
             <li class="list-group-item">
                 <div class="post-container" data-post_id={{ post.id }}>
-                    <small>{{ post.created_at }}</small>
+                    <small>{{ post.created_at|date:"F d, Y, H:i" }}</small>
                     <p>{{ post.body }}</p>
                     <small class="likes-counter">{{ post.number_of_likes }} </small>
                     {% if user in post.user_likes.all %}

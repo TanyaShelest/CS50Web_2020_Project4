@@ -11,7 +11,7 @@
                     <p>
                         <a href="{% url 'profile' username=post.author.username %}" class="h5">{{ post.author.username}}</a>
                     </p>
-                    <small>{{ post.created_at }}</small>
+                    <small>{{ post.created_at|date:"F d, Y, H:i" }}</small>
                     <div class="post-body">{{ post.body }}</div>
                     <small class="likes-counter">{{ post.number_of_likes }} </small>
                     {% if user in post.user_likes.all %}
