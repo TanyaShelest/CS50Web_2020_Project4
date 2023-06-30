@@ -26,7 +26,6 @@ def index(request):
 @login_required
 def new_post(request):
     if request.method == 'POST':
-
         data = json.loads(request.body)
         post = Post.objects.create(body=data.get('data'), author=request.user)
         post.save()
@@ -39,12 +38,11 @@ def new_post(request):
         return JsonResponse(post_obj, status=202)
 
     else:
-        return JsonResponse({"message": request.method}, status=404)
+        return JsonResponse({"message": 'Invalid request method'}, status=405)
 
 
 def login_view(request):
     if request.method == "POST":
-
         # Attempt to sign user in
         username = request.POST["username"]
         password = request.POST["password"]
@@ -129,7 +127,7 @@ def edit_post(request, id):
         return JsonResponse({"message": "Ok"}, status=202)
 
     else:
-        return JsonResponse({"message": request.method}, status=404)
+        return JsonResponse({"message": "Invalid request method"}, status=405)
 
 
 @login_required
@@ -162,34 +160,37 @@ def follow(request):
         if not follows:
             request_user_profile.follows.add(user_profile)
             request_user_profile.save()
-            return JsonResponse({"value": "Unfollow"}, status=200)
+            return JsonResponse({"value": "Unfollow", "number_of_followers": user_profile.followed_by.all().count()}, status=200)
         else:
             request_user_profile.follows.remove(user_profile)
             request_user_profile.save()
-            return JsonResponse({"value": "Follow"}, status=200)
+            return JsonResponse({"value": "Follow", "number_of_followers": user_profile.followed_by.all().count()}, status=200)
 
     else:
-        return JsonResponse({"message": "Must be POST request"}, status=403)
+        return JsonResponse({"message": "Invalid request method"}, status=405)
 
 
 @login_required
 def like_post(request):
-    data = json.loads(request.body)
-    post_id = data.get("data")
-    post = Post.objects.get(id=post_id)
+    if request.method == "POST":
+        data = json.loads(request.body)
+        post_id = data.get("data")
+        post = Post.objects.get(id=post_id)
 
-    liked = Like.objects.filter(post=post, author=request.user)
+        liked = Like.objects.filter(post=post, author=request.user)
 
-    if not liked:
-        like = Like.objects.create(post=post, author=request.user)
-        like.save()
-        post.number_of_likes += 1
-        post.user_likes.add(request.user)
-        post.save()
-        return JsonResponse({"number_of_likes": post.number_of_likes}, status=200)
+        if not liked:
+            like = Like.objects.create(post=post, author=request.user)
+            like.save()
+            post.number_of_likes += 1
+            post.user_likes.add(request.user)
+            post.save()
+            return JsonResponse({"number_of_likes": post.number_of_likes}, status=200)
+        else:
+            liked.delete()
+            post.number_of_likes -= 1
+            post.user_likes.remove(request.user)
+            post.save()
+            return JsonResponse({"number_of_likes": post.number_of_likes}, status=200)
     else:
-        liked.delete()
-        post.number_of_likes -= 1
-        post.user_likes.remove(request.user)
-        post.save()
-        return JsonResponse({"number_of_likes": post.number_of_likes}, status=200)
+        return JsonResponse({"message": "Invalid request method"}, status=405)

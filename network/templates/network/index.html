@@ -6,9 +6,9 @@
         {% if user.is_authenticated %}
         <h2 class="mx-5 my-4">Add New Post</h2>
         <div class="">
-            <form action="{% url 'new_post' %}" id="newPost" method="post">
+            <form action="{% url 'new_post' %}" id="newPost" method="post" onsubmit="createPost(event)">
                 {% csrf_token %}
-                <textarea class="form-control" name="body" required
+                <textarea class="form-control post-form" name="body" required
                     placeholder="What are you thinking about?"></textarea>
                 <input class="btn btn-success rounded-pill mt-3" type="submit" value="Post">
             </form>
@@ -21,7 +21,7 @@
             <li class="list-group-item bg-light mb-2">
                 <div class="post-container" data-post_id={{ post.id }}>
                     <p>
-                        <a href="{% url 'profile' username=post.author.username %}" class="h5">{{ post.author.username}}</a>
+                        <a href="{% url 'profile' username=post.author.username %}" class="h5">{{ post.author.username }}</a>
                     </p>
                     <small>{{ post.created_at }}</small>
                     <div class="post-body">{{ post.body }}</div>
@@ -52,7 +52,7 @@
                     <li class="page-item"><a href="?page={{ posts.previous_page_number }}" class="page-link">&lsaquo;</a></li>
                 {% endif %}
             {% endif %}
-            <li class="page-item active"><a href="?page={{ posts.number }}" class="page-link active">{{ posts.number}}</a></li>
+            <li class="page-item active"><a href="?page={{ posts.number }}" class="page-link active">{{ posts.number }}</a></li>
             {% if posts.has_next %}
                 {% if posts.next_page_number == posts.paginator.num_pages %}
                     <li class="page-item"><a href="?page={{ posts.paginator.num_pages }}" class="page-link"> &raquo;</a></li>

@@ -10,10 +10,10 @@
         {% endif %}
         <div class="row ml-1">
             <div class="col-md-auto py-2 border border-warning rounded">
-                <div class="mx-5">
-                    Followers {{ user_profile.followed_by.all|length }}
+                <div class="mx-5 followers">
+                    Followers <span>{{ user_profile.followed_by.all|length }}</span>
                 </div>
-                <div class="mx-5">
+                <div class="mx-5 following">
                     Following {{ user_profile.follows.all|length }}
                 </div>
             </div>

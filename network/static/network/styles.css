@@ -62,3 +62,12 @@ a, a:hover {
 .page-link:hover {
   background-color: darkgreen !important;
 }
+
+textarea.post-form {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  resize: vertical;
+  min-height: 100px;
+  line-height: 20px;
+}
